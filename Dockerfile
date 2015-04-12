@@ -4,16 +4,18 @@ MAINTAINER Rony Dray <contact@obigroup.fr>
 RUN echo 'deb http://http.debian.net/debian wheezy main contrib non-free' >> /etc/apt/sources.list
 RUN apt-get -y update
 RUN apt-get install -y \
-	g++ \
-	python \
-	python-pip \
-	python-dev \
-	libxml2-dev \
-	libxslt1-dev \
+    g++ \
+    python \
+    imagemagick \
+    python-pip \
+    python-dev \
+    libxml2-dev \
+    libxslt1-dev \
     python-setuptools \
     python-software-properties \
     software-properties-common \
-	git
+    git \
+    && apt-get clean
 
 RUN pip install \
 supervisor \
@@ -22,9 +24,12 @@ virtualenv
 # Create Cozy users, without home directories.
 RUN useradd -M cozy
 
+#Host where dataindexer listen
+ENV HOST dataindexer
+
 RUN mkdir -p /usr/local/cozy-indexer \
 && cd /usr/local/cozy-indexer \
-&& git clone https://github.com/obigroup/cozy-data-indexer.git \
+&& git clone https://github.com/cozy/cozy-data-indexer.git \
 && cd /usr/local/cozy-indexer/cozy-data-indexer \
 && virtualenv --quiet /usr/local/cozy-indexer/cozy-data-indexer/virtualenv \
 && . ./virtualenv/bin/activate \
@@ -32,7 +37,6 @@ RUN mkdir -p /usr/local/cozy-indexer \
 && chown -R cozy:cozy /usr/local/cozy-indexer
 
 # Clean APT cache for a lighter image
-RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Configure Supervisor.
@@ -45,8 +49,8 @@ RUN /usr/local/bin/supervisord -c /etc/supervisord.conf
 ADD supervisor/cozy-indexer.conf /etc/supervisor/conf.d/cozy-indexer.conf
 RUN chmod 0644 /etc/supervisor/conf.d/*
 
-EXPOSE 9102
+# EXPOSE 9102
 
-VOLUME ["usr/local/cozy-indexer/cozy-data-indexer/indexes"]
+VOLUME ["/usr/local/cozy-indexer/cozy-data-indexer"]
 
 CMD [ "/usr/local/bin/supervisord", "-n", "-c", "/etc/supervisord.conf" ]
