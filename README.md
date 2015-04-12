@@ -3,12 +3,14 @@
 docker build -t obigroup/cozy-dataindexer .
 ```
 
+# Dependencies
+[Cozy CouchDb](https://registry.hub.docker.com/u/obigroup/cozy-couchdb/)
+
 # Run:
-Need : [Cozy CouchDb](https://registry.hub.docker.com/u/obigroup/cozy-couchdb/)
 With fig :
 ```
 dataindexer:
-    build: dataindexer
+    image: obigroup/cozy-dataindexer
     hostname: dataindexer
     volumes_from:
     - couchdb
