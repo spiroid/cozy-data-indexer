@@ -9,6 +9,7 @@ With fig :
 ```
 dataindexer:
     build: dataindexer
+    hostname: dataindexer
     volumes_from:
     - couchdb
 ```
