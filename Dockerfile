@@ -1,13 +1,15 @@
 FROM debian:latest
-MAINTAINER Rony Dray <contact@obigroup.fr>
+MAINTAINER Rony Dray <contact@obigroup.fr>, Jonathan Dray <jonathan.dray@gmail.com>
 
-RUN echo 'deb http://http.debian.net/debian wheezy main contrib non-free' >> /etc/apt/sources.list
-RUN apt-get -y update
-RUN apt-get install -y \
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get -y update && apt-get install --quiet --assume-yes --no-install-recommends \
     g++ \
     python \
     imagemagick \
     python-pip \
+    python-virtualenv \
+    virtualenv \
     python-dev \
     libxml2-dev \
     libxslt1-dev \
@@ -17,9 +19,8 @@ RUN apt-get install -y \
     git \
     && apt-get clean
 
-RUN pip install \
-supervisor \
-virtualenv
+# Clean APT cache for a lighter image
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create Cozy users, without home directories.
 RUN useradd -M cozy
@@ -36,21 +37,16 @@ RUN mkdir -p /usr/local/cozy-indexer \
 && pip install -r /usr/local/cozy-indexer/cozy-data-indexer/requirements/common.txt \
 && chown -R cozy:cozy /usr/local/cozy-indexer
 
-# Clean APT cache for a lighter image
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Exposing ports
+EXPOSE 9102
 
-# Configure Supervisor.
-ADD supervisor/supervisord.conf /etc/supervisord.conf
-RUN mkdir -p /var/log/supervisor
-RUN chmod 774 /var/log/supervisor
-RUN /usr/local/bin/supervisord -c /etc/supervisord.conf
-
-# Import Supervisor configuration files.
-ADD supervisor/cozy-indexer.conf /etc/supervisor/conf.d/cozy-indexer.conf
-RUN chmod 0644 /etc/supervisor/conf.d/*
-
-# EXPOSE 9102
-
+# Volumes configuration
 VOLUME ["/usr/local/cozy-indexer/cozy-data-indexer"]
 
-CMD [ "/usr/local/bin/supervisord", "-n", "-c", "/etc/supervisord.conf" ]
+# Setting config dir to couch main directory
+WORKDIR /usr/local/cozy-indexer/cozy-data-indexer
+
+# Default user when running the container
+USER cozy
+
+CMD [ "./virtualenv/bin/python", "server.py" ]

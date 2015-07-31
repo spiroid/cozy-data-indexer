@@ -1,13 +1,19 @@
 # Build:
+
 ```
-docker build -t obigroup/cozy-dataindexer .
+docker build -t spiroid/cozy-data-indexer .
 ```
+
 
 # Dependencies
-[Cozy CouchDb](https://registry.hub.docker.com/u/obigroup/cozy-couchdb/)
+
+[Cozy CouchDb](https://registry.hub.docker.com/u/spiroid/cozy-couchdb/)
+
 
 # Run:
-With fig :
+
+With docker-compose :
+
 ```
 dataindexer:
     image: obigroup/cozy-dataindexer
@@ -16,7 +22,9 @@ dataindexer:
     - couchdb
 ```
 
-#More about updates
+
+# More about updates
+
 ```
 https://forum.cozy.io/t/deployer-cozy-avec-docker-et-des-containers-autonomes/468
 ```
