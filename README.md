@@ -1,30 +1,50 @@
-# Build:
+# Cozy data indexer
+
+Data indexer image for the [cozy cloud](https://cozy.io) stack
+
+
+## Pull the image
 
 ```
-docker build -t spiroid/cozy-data-indexer .
+$ docker pull spiroid/cozy-data-indexer
 ```
 
 
-# Dependencies
-
-[Cozy CouchDb](https://registry.hub.docker.com/u/spiroid/cozy-couchdb/)
-
-
-# Run:
-
-With docker-compose :
+## Build it yourself
 
 ```
+$ git clone git@github.com:spiroid/cozy-data-indexer.git
+$ cd cozy-data-indexer
+$ doker build -t spiroid/cozy-data-indexer .
+```
+
+## Run:
+
+With docker-compose:
+
+```
+configuration:
+    image: spiroid/cozy-conf
+
 dataindexer:
-    image: obigroup/cozy-dataindexer
+    image: spiroid/cozy-data-indexer
     hostname: dataindexer
     volumes_from:
-    - couchdb
+        - configuration
+
 ```
 
 
-# More about updates
+## Related images
 
-```
-https://forum.cozy.io/t/deployer-cozy-avec-docker-et-des-containers-autonomes/468
-```
+This configuration image was created to work with the following images:
+
+  * [cozy conf](https://github.com/spiroid/cozy-conf)
+  * [cozy couchdb data](https://github.com/spiroid/cozy-couchdb-data) 
+  * [cozy couchdb](https://github.com/spiroid/cozy-couchdb)
+  * [cozy controller](https://github.com/spiroid/cozy-controller)
+
+
+## Inspirations
+
+ * https://forum.cozy.io/t/deployer-cozy-avec-docker-et-des-containers-autonomes/468
