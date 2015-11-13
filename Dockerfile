@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:sid
 MAINTAINER Rony Dray <contact@obigroup.fr>, Jonathan Dray <jonathan.dray@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -30,7 +30,7 @@ ENV HOST dataindexer
 
 RUN mkdir -p /usr/local/cozy-indexer \
 && cd /usr/local/cozy-indexer \
-&& git clone https://github.com/cozy/cozy-data-indexer.git \
+&& git clone --branch v1.0.6 --single-branch https://github.com/cozy/cozy-data-indexer.git \
 && cd /usr/local/cozy-indexer/cozy-data-indexer \
 && virtualenv --quiet /usr/local/cozy-indexer/cozy-data-indexer/virtualenv \
 && . ./virtualenv/bin/activate \
